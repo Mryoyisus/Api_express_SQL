@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>CRUD Usuarios</title>
+</head>
+<body>
+  <h1>CRUD Usuarios (MySQL + Node.js)</h1>
+
+  <h3>Crear Usuario</h3>
+  <input id="nombre" placeholder="Nombre" />
+  <input id="email" placeholder="Email" />
+  <input id="edad" type="number" placeholder="Edad" />
+  <button onclick="crear()">Crear</button>
+
+  <h3>Lista de Usuarios</h3>
+  <table>
+    <thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Edad</th><th>Acciones</th></tr></thead>
+    <tbody id="lista"></tbody>
+  </table>
+
+  <script>
+    const API = 'http://localhost:3000/api/usuarios';
+
+    async function cargar() {
+      const res = await fetch(API);
+      const data = await res.json();
+      const tbody = document.getElementById('lista');
+      tbody.innerHTML = '';
+      data.forEach(u => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${u.id}</td>
+            <td><input value="${u.nombre}" id="nom-${u.id}"></td>
+            <td><input value="${u.email}" id="email-${u.id}"></td>
+            <td><input value="${u.edad}" id="edad-${u.id}" type="number"></td>
+            <td>
+              <button onclick="actualizar(${u.id})">Guardar</button>
+              <button onclick="eliminar(${u.id})">Eliminar</button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    async function crear() {
+      const nombre = document.getElementById('nombre').value;
+      const email = document.getElementById('email').value;
+      const edad = document.getElementById('edad').value;
+      await fetch(API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, email, edad })
+      });
+      cargar();
+    }
+
+    async function actualizar(id) {
+      const nombre = document.getElementById(`nom-${id}`).value;
+      const email = document.getElementById(`email-${id}`).value;
+      const edad = document.getElementById(`edad-${id}`).value;
+      await fetch(`${API}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, email, edad })
+      });
+      alert('Actualizado');
+    }
+
+    async function eliminar(id) {
+      if (confirm('¿Eliminar?')) {
+        await fetch(`${API}/${id}`, { method: 'DELETE' });
+        cargar();
+      }
+    }
+
+    cargar();
+  </script>
+</body>
+</html>
