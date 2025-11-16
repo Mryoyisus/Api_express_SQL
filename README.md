@@ -2,7 +2,7 @@ Proyecto API Routes usando
 (espress + Node.js + MySQL (XAMPP))
 
 Integrantes:
-Jose Leonardo Ramirez Charrupi
+Jose Leonardo Ramirez Charrupi,
 Fernando Erazo Correa
 
 | Método | Ruta | Descripción |
